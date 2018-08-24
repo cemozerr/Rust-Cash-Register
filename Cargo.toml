@@ -1,0 +1,6 @@
+[package]
+name = "cash_register"
+version = "0.1.0"
+authors = ["Cem Ozer <cozercem@gmail.com>"]
+
+[dependencies]
