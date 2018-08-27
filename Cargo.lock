@@ -1,4 +1,37 @@
 [[package]]
 name = "cash_register"
 version = "0.1.0"
+dependencies = [
+ "serde_json 1.0.26 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
+[[package]]
+name = "itoa"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "ryu"
+version = "0.2.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "serde"
+version = "1.0.74"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "serde_json"
+version = "1.0.26"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "itoa 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ryu 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.74 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[metadata]
+"checksum itoa 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = "5adb58558dcd1d786b5f0bd15f3226ee23486e24b7b58304b60f64dc68e62606"
+"checksum ryu 0.2.5 (registry+https://github.com/rust-lang/crates.io-index)" = "e7c066b8e2923f05d4718a06d2622f189ff362bc642bfade6c6629f0440f3827"
+"checksum serde 1.0.74 (registry+https://github.com/rust-lang/crates.io-index)" = "f218becd0d51dd24297ef804cb9b2de179dcdc2a3ddf8a73b04b4d595d9e6338"
+"checksum serde_json 1.0.26 (registry+https://github.com/rust-lang/crates.io-index)" = "44dd2cfde475037451fa99b7e5df77aa3cfd1536575fa8e7a538ab36dcde49ae"
