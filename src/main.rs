@@ -17,10 +17,16 @@ fn main() {
 
     println!("{}", json);
 
+    let mut receipt_id: u8;
+
     loop{
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer);
-        println!("item: {}", buffer);
+        if buffer == "\n" {
+            println!("Newline detected");
+        }
+        else {
+            println!("item: {}", buffer);
+        }
     }
 }
-
