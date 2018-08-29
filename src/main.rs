@@ -9,25 +9,34 @@ fn main() {
     let args: Vec<String> = env::args().collect();
     let filename = &args[1];
 
-    let contents = fs::read_to_string(filename)
+    let file_contents = fs::read_to_string(filename)
         .expect("Something went wrong reading the file");
 
-    let json: Value = serde_json::from_str(&contents)
+    let item_price_list: Value = serde_json::from_str(&file_contents)
         .expect("JSON was not well-formatted");
 
-    println!("{}", json);
+    //println!("\nPrice List {}\n", &item_price_list);
 
-    let mut register = Register{receipt_id:0};
+    let mut register = Register{
+        receipt_id:0,
+    };
 
     loop{
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer);
-        if buffer == "\n" {
+        let buffer = buffer.trim();
+        if buffer == "" {
             register.print_receipt();
             register.start_new_receipt();
-        }
-        else {
-            println!("item: {}", buffer);
+        } else {
+            match &item_price_list[&buffer]{
+                Value::Number(number) => {
+                    println!("item: {:?}", number.as_u64().unwrap());
+                }
+                _ =>{
+                    println!("Item rejected.\n");
+                }
+            }
         }
     }
 }
@@ -37,7 +46,7 @@ struct Register{
 }
 
 impl Register{
-    fn start_new_receipt(& mut self){
+    fn start_new_receipt(&mut self){
         self.receipt_id += 1;
     }
 
