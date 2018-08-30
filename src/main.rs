@@ -15,28 +15,35 @@ fn main() {
     let item_price_list: Value = serde_json::from_str(&file_contents)
         .expect("JSON was not well-formatted");
 
-    //println!("\nPrice List {}\n", &item_price_list);
-
     let mut register = Register{
         receipt_id:0,
         total:0,
         state: State::Ready,
+        price_list: item_price_list,
+        receipts: Vec::new(),
     };
+
+    register.start_new_receipt();
 
     loop{
         let mut buffer = String::new();
         io::stdin().read_line(&mut buffer);
-        let buffer = buffer.trim();
-        if buffer == "" {
-            register.print_receipt();
-            register.start_new_receipt();
-        } else {
-            match &item_price_list[&buffer]{
-                Value::Number(number) => {
-                    register.add_to_receipt(number.as_u64().unwrap());
+        let buffer = buffer.trim().to_string();
+
+        match register.state {
+            State::Ready => {
+                if buffer == "" {
+                    continue;
                 }
-                _ =>{
-                    println!("Item rejected.\n");
+                register.add_to_receipt(&buffer);
+            }
+            State::Ringing => {
+                if buffer == "" {
+                    register.print_receipt();
+                    register.start_new_receipt();
+                }
+                else {
+                    register.add_to_receipt(&buffer);
                 }
             }
         }
@@ -44,9 +51,19 @@ fn main() {
 }
 
 struct Register{
-    receipt_id: u8,
-    total: u64,
     state: State,
+    price_list: Value,
+    receipts: Vec<Receipt>,
+}
+
+struct Receipt{
+    total: u64,
+    items: Vec<Item>,
+}
+
+struct Item{
+    name: String,
+    price: u64,
 }
 
 enum State{
@@ -56,13 +73,29 @@ enum State{
 
 impl Register{
     fn start_new_receipt(&mut self){
+        let mut new_receipt = Receipt{
+            total: 0,
+            items: Vec::new(),
+        };
+        self.receipts.push(new_receipt);
         self.receipt_id += 1;
         self.total = 0;
     }
 
-    fn add_to_receipt(&mut self, item_price: u64){
+    fn add_to_receipt(&mut self, item: &String){
         self.state = State::Ringing;
-        self.total += item_price; 
+        let item_price = &self.price_list[item];
+        if let Value::Number(number) = item_price{
+            let receipt_id = self.receipts.len()-1;
+            let price = number.as_u64().unwrap();
+            self.receipts[receipt_id].total += price;
+            self.receipts[receipt_id].items.push(Item{
+                name: item.clone(),
+                price: price,
+            });
+        } else {
+            println!("Item rejected. \n");
+        }
     }
 
     fn print_receipt(&mut self){
