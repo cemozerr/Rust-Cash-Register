@@ -16,8 +16,6 @@ fn main() {
         .expect("JSON was not well-formatted");
 
     let mut register = Register{
-        receipt_id:0,
-        total:0,
         state: State::Ready,
         price_list: item_price_list,
         receipts: Vec::new(),
@@ -34,12 +32,16 @@ fn main() {
             State::Ready => {
                 if buffer == "" {
                     continue;
+                } else if let Ok(num) = buffer.parse::<usize>(){
+                    register.print_receipt(num);
+                } else {
+                    register.add_to_receipt(&buffer);
                 }
-                register.add_to_receipt(&buffer);
             }
             State::Ringing => {
                 if buffer == "" {
-                    register.print_receipt();
+                    let receipt_id = register.receipts.len()-1;
+                    register.print_receipt(receipt_id);
                     register.start_new_receipt();
                 }
                 else {
@@ -56,11 +58,13 @@ struct Register{
     receipts: Vec<Receipt>,
 }
 
+#[derive(Debug)]
 struct Receipt{
     total: u64,
     items: Vec<Item>,
 }
 
+#[derive(Debug)]
 struct Item{
     name: String,
     price: u64,
@@ -78,8 +82,6 @@ impl Register{
             items: Vec::new(),
         };
         self.receipts.push(new_receipt);
-        self.receipt_id += 1;
-        self.total = 0;
     }
 
     fn add_to_receipt(&mut self, item: &String){
@@ -98,9 +100,16 @@ impl Register{
         }
     }
 
-    fn print_receipt(&mut self){
+    fn print_receipt(&mut self, receipt_id:usize){
         self.state = State::Ready;
-        println!("Receipt ID: {} \n------------- \n  Total: ${}",
-                 self.receipt_id, self.total);
+        if receipt_id < self.receipts.len(){ 
+            println!("Receipt_ID: {},\n{:?}",
+                    receipt_id, 
+                    self.receipts[receipt_id]
+            );
+        }
+        else {
+            println!("Receipt not available.");
+        }
     }
 }
