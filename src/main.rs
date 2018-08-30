@@ -20,6 +20,7 @@ fn main() {
     let mut register = Register{
         receipt_id:0,
         total:0,
+        state: State::Ready,
     };
 
     loop{
@@ -45,6 +46,12 @@ fn main() {
 struct Register{
     receipt_id: u8,
     total: u64,
+    state: State,
+}
+
+enum State{
+    Ready,
+    Ringing,
 }
 
 impl Register{
@@ -52,12 +59,15 @@ impl Register{
         self.receipt_id += 1;
         self.total = 0;
     }
+
     fn add_to_receipt(&mut self, item_price: u64){
+        self.state = State::Ringing;
         self.total += item_price; 
     }
 
-    fn print_receipt(&self){
-        println!("Receipt ID: {} \n------------- \n  Total: {}",
+    fn print_receipt(&mut self){
+        self.state = State::Ready;
+        println!("Receipt ID: {} \n------------- \n  Total: ${}",
                  self.receipt_id, self.total);
     }
 }
