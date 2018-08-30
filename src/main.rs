@@ -19,6 +19,7 @@ fn main() {
 
     let mut register = Register{
         receipt_id:0,
+        total:0,
     };
 
     loop{
@@ -31,7 +32,7 @@ fn main() {
         } else {
             match &item_price_list[&buffer]{
                 Value::Number(number) => {
-                    println!("item: {:?}", number.as_u64().unwrap());
+                    register.add_to_receipt(number.as_u64().unwrap());
                 }
                 _ =>{
                     println!("Item rejected.\n");
@@ -43,14 +44,20 @@ fn main() {
 
 struct Register{
     receipt_id: u8,
+    total: u64,
 }
 
 impl Register{
     fn start_new_receipt(&mut self){
         self.receipt_id += 1;
+        self.total = 0;
+    }
+    fn add_to_receipt(&mut self, item_price: u64){
+        self.total += item_price; 
     }
 
     fn print_receipt(&self){
-        println!("Receipt ID: {}", self.receipt_id);
+        println!("Receipt ID: {} \n------------- \n  Total: {}",
+                 self.receipt_id, self.total);
     }
 }
