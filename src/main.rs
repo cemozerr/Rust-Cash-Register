@@ -95,6 +95,7 @@ impl Register{
                 name: item.clone(),
                 price: price,
             });
+            println!("Item Price: {}", price);
         } else {
             println!("Item rejected. \n");
         }
